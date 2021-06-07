@@ -1,0 +1,41 @@
+{
+    "name": "dutchcodingcompany/laravel-json-schema",
+    "description": "Adds a service provider for json schemas",
+    "keywords": [
+        "dutchcodingcompany",
+        "dcc",
+        "laravel",
+        "json",
+        "schema"
+    ],
+    "require": {
+        "php" : "^7.4",
+        "laravel/framework": "^6.0",
+        "swaggest/json-schema": "^0.12.33"
+    },
+    "autoload": {
+        "psr-4": {
+            "DutchCodingCompany\\LaravelJsonSchema\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "DutchCodingCompany\\LaravelJsonSchema\\ServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tom",
+            "email": "tom@dutchcodingcompany.com"
+        }
+    ],
+    "homepage": "https://github.com/dutchcodingcompany",
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
