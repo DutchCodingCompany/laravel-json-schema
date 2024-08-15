@@ -13,10 +13,10 @@ composer require dutchcodingcompany/laravel-json-schema
 ```
 
 ## Usage
-1. Create a json schema in the schema directory, eg. `storage/schema/example.json`
+1. Create a json schema in the schema directory, eg. `storage/app/schema/example.json`
 2. Reference the schema in the validator: `new \DutchCodingCompany\LaravelJsonSchema\Rules\JsonSchemaRule('example')`
 
-To customize the schema directory, publish the config file.
+To customize the schema directory, use environment variable `JSON_SCHEMA_DIRECTORY` or publish the config file.
 
 ## License
 
