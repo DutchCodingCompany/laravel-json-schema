@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.0 - 2024-08-15
+- Support for laravel 11.x
+
 ## 0.3.0 - 2023-08-08
 - Support for laravel 10.x
 
