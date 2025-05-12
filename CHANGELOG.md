@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.0 - 2025-05-12
+- Support for laravel 12.x
+- Drop support for php 7.4
+- Drop support for laravel < 10.x
+
 ## 0.4.0 - 2024-08-15
 - Support for laravel 11.x
 

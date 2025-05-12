@@ -19,7 +19,7 @@ class JsonSchemaRule implements Rule
     /**
      * @param string|null $schema schema name to validate
      */
-    public function __construct(string $schema = null, bool $detailedMessage = true)
+    public function __construct(string | null $schema = null, bool $detailedMessage = true)
     {
         $this->repository = Container::getInstance()->make(JsonSchemaRepository::class);
         $this->schema = $schema;

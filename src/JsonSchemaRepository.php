@@ -25,7 +25,7 @@ class JsonSchemaRepository implements Contracts\JsonSchemaValidator
         $this->config = $config;
     }
 
-    public function setContext(Context $context = null): self
+    public function setContext(Context | null $context = null): self
     {
         $this->schemaContext = $context;
 
