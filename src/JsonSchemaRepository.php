@@ -4,6 +4,7 @@ namespace DutchCodingCompany\LaravelJsonSchema;
 
 use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use JsonException;
 use LogicException;
@@ -60,11 +61,20 @@ class JsonSchemaRepository implements Contracts\JsonSchemaValidator
         );
     }
 
+    final public function fullCachePath(): string
+    {
+        return App::bootstrapPath('cache/json_schemas.php');
+    }
+
     /**
      * @return array<string, string>
      */
     protected function findSchemaFiles(): array
     {
+        if ($this->filesystem->disk('local')->exists($path = $this->fullCachePath())) {
+            return include $path;
+        }
+
         // Grab files
         $files = $this->disk()->files(
             $directory = $this->getConfig('directory'),

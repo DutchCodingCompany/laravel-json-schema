@@ -2,6 +2,7 @@
 
 namespace DutchCodingCompany\LaravelJsonSchema;
 
+use DutchCodingCompany\LaravelJsonSchema\Commands;
 use DutchCodingCompany\LaravelJsonSchema\Contracts\JsonSchemaValidator;
 use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
@@ -30,6 +31,21 @@ class ServiceProvider extends LaravelServiceProvider
 
     public function bootForConsole(): void
     {
+        // Register commands
+        $this->commands([
+            Commands\Optimize::class,
+            Commands\OptimizeClear::class,
+        ]);
+
+        if (config('json-schema.auto-cache')) {
+            // When enabled, auto-cache json schema paths
+            $this->optimizes(
+                optimize: 'json-schema:optimize',
+                clear: 'json-schema:optimize-clear',
+                key: 'json-schema',
+            );
+        }
+
         $this->publishes([
             __DIR__.'/../config/json-schema.php' => config_path('json-schema.php'),
         ], 'json-schema.config');
