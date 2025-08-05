@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0 - 2025-08-05
+- Modernize code
+- Drop support for laravel 10.x
+- Drop support for php 8.0 and 8.1
+
 ## 1.0.0 - 2025-05-12
 - Support for laravel 12.x
 - Drop support for php 7.4
