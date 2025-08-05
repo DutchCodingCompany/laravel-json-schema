@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.0 - 2025-08-05
+- Add `JsonSchemaAttributeRule`
+
 ## 2.0.0 - 2025-08-05
 - Modernize code
 - Drop support for laravel 10.x
