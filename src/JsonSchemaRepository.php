@@ -2,19 +2,21 @@
 
 namespace DutchCodingCompany\LaravelJsonSchema;
 
-use Illuminate\Support\Str;
-use Swaggest\JsonSchema\SchemaContract;
-use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
+use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 use JsonException;
 use Swaggest\JsonSchema\Context;
 use Swaggest\JsonSchema\InvalidValue;
 use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\SchemaContract;
 
 class JsonSchemaRepository implements Contracts\JsonSchemaValidator
 {
     private FilesystemFactory $filesystem;
+
     private array $config;
+
     private ?Context $schemaContext = null;
 
     protected ?array $files = null;
@@ -68,7 +70,7 @@ class JsonSchemaRepository implements Contracts\JsonSchemaValidator
             }
 
             return preg_match($filter, $file) != false;
-        })->mapWithKeys(function($file) use ($directory, $filter, $schemaName) {
+        })->mapWithKeys(function ($file) use ($directory, $filter, $schemaName) {
             $originalPath = $file;
 
             if (! is_null($directory) && Str::length($directory) > 1) {
@@ -119,7 +121,7 @@ class JsonSchemaRepository implements Contracts\JsonSchemaValidator
             $schema->in(json_decode($data, false, 512, JSON_THROW_ON_ERROR));
 
             $result = true;
-        } catch (InvalidValue|JsonException $e) {
+        } catch (InvalidValue | JsonException $e) {
             $exception = $e;
         }
 

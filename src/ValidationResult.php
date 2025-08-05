@@ -8,10 +8,13 @@ use Throwable;
 class ValidationResult implements Contracts\JsonSchemaValidationResult
 {
     protected bool $result;
+
     protected ?Throwable $exception;
 
     protected ?string $schemaName = null;
+
     protected ?SchemaContract $schema = null;
+
     protected $data = null;
 
     public function __construct(bool $result, ?Throwable $exception = null)

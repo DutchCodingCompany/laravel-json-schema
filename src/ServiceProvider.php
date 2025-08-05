@@ -3,12 +3,12 @@
 namespace DutchCodingCompany\LaravelJsonSchema;
 
 use DutchCodingCompany\LaravelJsonSchema\Rules\JsonSchemaRule;
-use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 
-class ServiceProvider extends LaravelServiceProvider {
-
+class ServiceProvider extends LaravelServiceProvider
+{
     public function boot()
     {
         if ($this->app->runningInConsole()) {
@@ -18,9 +18,9 @@ class ServiceProvider extends LaravelServiceProvider {
 
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/json-schema.php', 'json-schema');
+        $this->mergeConfigFrom(__DIR__.'/../config/json-schema.php', 'json-schema');
 
-        $this->app->singleton(JsonSchemaRepository::class, function($app) {
+        $this->app->singleton(JsonSchemaRepository::class, function ($app) {
             return new JsonSchemaRepository($app->make(FilesystemFactory::class), $app['config']['json-schema'] ?? []);
         });
     }

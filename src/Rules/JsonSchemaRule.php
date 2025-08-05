@@ -12,6 +12,7 @@ class JsonSchemaRule implements Rule
     protected JsonSchemaRepository $repository;
 
     protected ?string $schema;
+
     protected bool $detailedMessage;
 
     protected ?JsonSchemaValidationResult $result = null;
