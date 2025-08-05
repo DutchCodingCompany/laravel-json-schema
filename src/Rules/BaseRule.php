@@ -27,6 +27,12 @@ abstract class BaseRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        $value ??= '';
+
+        if (! is_string($value)) {
+            $fail('json-schema::messages.must-be-string')->translate(['attribute' => $attribute]);
+        }
+
         $result = $this->schemaValidator->validate($this->determineSchemaName(), $value);
 
         if ($result->failed()) {
