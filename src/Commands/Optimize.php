@@ -4,9 +4,6 @@ namespace DutchCodingCompany\LaravelJsonSchema\Commands;
 
 use DutchCodingCompany\LaravelJsonSchema\JsonSchemaRepository;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
-use Illuminate\Contracts\Filesystem\Filesystem;
-use Illuminate\Support\Facades\App;
 
 class Optimize extends Command
 {
@@ -27,11 +24,11 @@ class Optimize extends Command
     /**
      * Execute the console command.
      */
-    public function handle(FilesystemFactory $filesystem, JsonSchemaRepository $repository): int
+    public function handle(JsonSchemaRepository $repository): int
     {
         $this->call('json-schema:optimize-clear');
 
-        $filesystem->disk('local')->put(
+        file_put_contents(
             $repository->fullCachePath(),
             '<?php return '.var_export($repository->schemaFiles(true), true).';'.PHP_EOL,
         );

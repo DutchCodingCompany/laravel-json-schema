@@ -71,7 +71,7 @@ class JsonSchemaRepository implements Contracts\JsonSchemaValidator
      */
     protected function findSchemaFiles(): array
     {
-        if ($this->filesystem->disk('local')->exists($path = $this->fullCachePath())) {
+        if (file_exists($path = $this->fullCachePath())) {
             return include $path;
         }
 

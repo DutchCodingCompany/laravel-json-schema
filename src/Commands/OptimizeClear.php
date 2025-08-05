@@ -4,7 +4,6 @@ namespace DutchCodingCompany\LaravelJsonSchema\Commands;
 
 use DutchCodingCompany\LaravelJsonSchema\JsonSchemaRepository;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
 
 class OptimizeClear extends Command
 {
@@ -25,9 +24,11 @@ class OptimizeClear extends Command
     /**
      * Execute the console command.
      */
-    public function handle(FilesystemFactory $filesystem, JsonSchemaRepository $repository): int
+    public function handle(JsonSchemaRepository $repository): int
     {
-        $filesystem->disk('local')->delete($repository->fullCachePath());
+        if (file_exists($path = $repository->fullCachePath())) {
+            unlink($path);
+        }
 
         $this->outputComponents()->info('Json schemas cache cleared successfully!');
 
