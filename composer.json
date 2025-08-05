@@ -15,7 +15,8 @@
     },
     "require-dev": {
         "adamwojs/php-cs-fixer-phpdoc-force-fqcn": "^2.0",
-        "friendsofphp/php-cs-fixer": "^3.85"
+        "friendsofphp/php-cs-fixer": "^3.85",
+        "phpstan/phpstan": "^2.1"
     },
     "autoload": {
         "psr-4": {

@@ -15,11 +15,9 @@ interface JsonSchemaValidationResult
 
     public function getException(): ?Throwable;
 
-    public function withContext(string $schemaName, SchemaContract $schema, $data = null): self;
-
     public function getSchemaName(): ?string;
 
     public function getSchema(): ?SchemaContract;
 
-    public function getData();
+    public function getData(): ?string;
 }
