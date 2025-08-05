@@ -2,30 +2,41 @@
 
 namespace DutchCodingCompany\LaravelJsonSchema;
 
-use Illuminate\Support\Str;
-use Swaggest\JsonSchema\SchemaContract;
-use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
+use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 use JsonException;
+use LogicException;
 use Swaggest\JsonSchema\Context;
 use Swaggest\JsonSchema\InvalidValue;
 use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\SchemaContract;
 
 class JsonSchemaRepository implements Contracts\JsonSchemaValidator
 {
-    private FilesystemFactory $filesystem;
-    private array $config;
-    private ?Context $schemaContext = null;
+    protected ?Context $schemaContext = null;
 
+    /**
+     * @var array<string, string>|null
+     */
     protected ?array $files = null;
 
-    public function __construct(FilesystemFactory $filesystem, array $config)
-    {
-        $this->filesystem = $filesystem;
-        $this->config = $config;
+    /**
+     * @var array<string, \Swaggest\JsonSchema\SchemaContract>
+     */
+    protected array $schemaCache = [];
+
+    /**
+     * @param array<string, mixed> $config
+     */
+    public function __construct(
+        protected FilesystemFactory $filesystem,
+        protected readonly array $config,
+    ) {
+        //
     }
 
-    public function setContext(Context | null $context = null): self
+    public function setContext(Context | null $context = null): static
     {
         $this->schemaContext = $context;
 
@@ -37,7 +48,7 @@ class JsonSchemaRepository implements Contracts\JsonSchemaValidator
         return $this->schemaContext;
     }
 
-    public function getConfig(string $key)
+    public function getConfig(string $key): mixed
     {
         return data_get($this->config, $key);
     }
@@ -49,6 +60,9 @@ class JsonSchemaRepository implements Contracts\JsonSchemaValidator
         );
     }
 
+    /**
+     * @return array<string, string>
+     */
     protected function findSchemaFiles(): array
     {
         // Grab files
@@ -68,7 +82,7 @@ class JsonSchemaRepository implements Contracts\JsonSchemaValidator
             }
 
             return preg_match($filter, $file) != false;
-        })->mapWithKeys(function($file) use ($directory, $filter, $schemaName) {
+        })->mapWithKeys(function ($file) use ($directory, $filter, $schemaName) {
             $originalPath = $file;
 
             if (! is_null($directory) && Str::length($directory) > 1) {
@@ -79,6 +93,9 @@ class JsonSchemaRepository implements Contracts\JsonSchemaValidator
         })->toArray();
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function schemaFiles(bool $refresh = false): array
     {
         if ($refresh) {
@@ -90,14 +107,18 @@ class JsonSchemaRepository implements Contracts\JsonSchemaValidator
 
     public function hasSchema(string $schema): bool
     {
-        return array_key_exists($schema, $this->schemaFiles());
+        return array_key_exists($schema, $this->schemaFiles()) || array_key_exists($schema, $this->schemaCache);
     }
 
-    protected function findSchema(string $schema): SchemaContract
+    protected function importSchema(string $schema): SchemaContract
     {
         $file = $this->disk()->get($this->schemaFiles()[$schema]);
 
-        return Schema::import(json_decode($file, false, 512, JSON_THROW_ON_ERROR), $this->getContext());
+        if ($file === null) {
+            throw new LogicException('Schema "'.$schema.'" was discovered, but file does not exist or is empty.');
+        }
+
+        return Schema::import(json_decode($file, flags: JSON_THROW_ON_ERROR), $this->getContext());
     }
 
     public function getSchema(string $schema): ?SchemaContract
@@ -106,23 +127,27 @@ class JsonSchemaRepository implements Contracts\JsonSchemaValidator
             return null;
         }
 
-        return $this->schemaCache[$schema] ??= $this->findSchema($schema);
+        return $this->schemaCache[$schema] ??= $this->importSchema($schema);
     }
 
-    public function validate(string $schemaName, $data): Contracts\JsonSchemaValidationResult
+    public function validate(string $schemaName, string $data): Contracts\JsonSchemaValidationResult
     {
         $schema = $this->getSchema($schemaName);
+
+        if ($schema === null) {
+            return new ValidationResult(false, $schemaName, data: $data, exception: new LogicException('Schema "'.$schemaName.'" does not exist.'));
+        }
 
         $result = false;
         $exception = null;
         try {
-            $schema->in(json_decode($data, false, 512, JSON_THROW_ON_ERROR));
+            $schema->in(json_decode($data, flags: JSON_THROW_ON_ERROR));
 
             $result = true;
-        } catch (InvalidValue|JsonException $e) {
+        } catch (InvalidValue | JsonException $e) {
             $exception = $e;
         }
 
-        return (new ValidationResult($result, $exception))->withContext($schemaName, $schema, $data);
+        return new ValidationResult($result, $schemaName, $schema, $data, $exception);
     }
 }

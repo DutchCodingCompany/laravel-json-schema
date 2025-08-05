@@ -2,57 +2,43 @@
 
 namespace DutchCodingCompany\LaravelJsonSchema\Rules;
 
-use DutchCodingCompany\LaravelJsonSchema\Contracts\JsonSchemaValidationResult;
-use DutchCodingCompany\LaravelJsonSchema\JsonSchemaRepository;
+use Closure;
+use DutchCodingCompany\LaravelJsonSchema\Contracts\JsonSchemaValidator;
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Contracts\Validation\ValidationRule;
 
-class JsonSchemaRule implements Rule
+class JsonSchemaRule implements ValidationRule
 {
-    protected JsonSchemaRepository $repository;
-
-    protected ?string $schema;
-    protected bool $detailedMessage;
-
-    protected ?JsonSchemaValidationResult $result = null;
+    protected JsonSchemaValidator $schemaValidator;
 
     /**
-     * @param string|null $schema schema name to validate
+     * @param  string  $schema  name of the schema to validate
+     * @param  bool  $detailedMessage  wether of not to include the details of what failed
+     * @param  \DutchCodingCompany\LaravelJsonSchema\Contracts\JsonSchemaValidator|null  $schemaValidator  custom repository, otherwise resolved from the service container
      */
-    public function __construct(string | null $schema = null, bool $detailedMessage = true)
-    {
-        $this->repository = Container::getInstance()->make(JsonSchemaRepository::class);
-        $this->schema = $schema;
-        $this->detailedMessage = $detailedMessage;
+    public function __construct(
+        protected string $schema,
+        protected bool $detailedMessage = true,
+        JsonSchemaValidator | null $schemaValidator = null,
+    ) {
+        $this->schemaValidator = $schemaValidator ?? Container::getInstance()->make(JsonSchemaValidator::class);
     }
 
     /**
-     * Determine if the validation rule passes.
-     *
-     * @param  string  $attribute
-     * @param  mixed  $value
-     * @return bool
+     * Run the validation rule.
      */
-    public function passes($attribute, $value)
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $this->result = $this->repository->validate($this->schema, $value);
+        $result = $this->schemaValidator->validate($this->schema, $value);
 
-        return $this->result->passed();
-    }
-
-    /**
-     * Get the validation error message.
-     *
-     * @return string
-     */
-    public function message()
-    {
-        $message = 'JSON validation failed for :attribute.';
-
-        if ($this->detailedMessage) {
-            $message .= ' '.(optional($this->result)->getMessage() ?? '');
+        if ($result->failed()) {
+            $fail($this->detailedMessage
+                ? 'json-schema::messages.detailed-error-message'
+                : 'json-schema::messages.error-message'
+            )->translate([
+                'attribute' => $attribute,
+                'details' => $result->getMessage() ?? '',
+            ]);
         }
-
-        return $message;
     }
 }

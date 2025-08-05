@@ -7,26 +7,14 @@ use Throwable;
 
 class ValidationResult implements Contracts\JsonSchemaValidationResult
 {
-    protected bool $result;
-    protected ?Throwable $exception;
-
-    protected ?string $schemaName = null;
-    protected ?SchemaContract $schema = null;
-    protected $data = null;
-
-    public function __construct(bool $result, ?Throwable $exception = null)
-    {
-        $this->result = $result;
-        $this->exception = $exception;
-    }
-
-    public function withContext(string $schemaName, SchemaContract $schema, $data = null): self
-    {
-        $this->schemaName = $schemaName;
-        $this->schema = $schema;
-        $this->data = $data;
-
-        return $this;
+    public function __construct(
+        protected bool $result,
+        protected string $schemaName,
+        protected ?SchemaContract $schema = null,
+        protected ?string $data = null,
+        protected ?Throwable $exception = null,
+    ) {
+        //
     }
 
     public function passed(): bool
@@ -41,7 +29,7 @@ class ValidationResult implements Contracts\JsonSchemaValidationResult
 
     public function getMessage(): ?string
     {
-        return optional($this->exception)->getMessage();
+        return $this->exception?->getMessage();
     }
 
     public function getException(): ?Throwable
@@ -59,7 +47,7 @@ class ValidationResult implements Contracts\JsonSchemaValidationResult
         return $this->schema;
     }
 
-    public function getData()
+    public function getData(): ?string
     {
         return $this->data;
     }

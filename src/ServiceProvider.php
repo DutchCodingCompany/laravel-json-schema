@@ -2,33 +2,40 @@
 
 namespace DutchCodingCompany\LaravelJsonSchema;
 
-use DutchCodingCompany\LaravelJsonSchema\Rules\JsonSchemaRule;
-use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
+use DutchCodingCompany\LaravelJsonSchema\Contracts\JsonSchemaValidator;
 use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 
-class ServiceProvider extends LaravelServiceProvider {
-
-    public function boot()
+class ServiceProvider extends LaravelServiceProvider
+{
+    public function boot(): void
     {
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'json-schema');
+
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
     }
 
-    public function register()
+    public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/json-schema.php', 'json-schema');
+        $this->mergeConfigFrom(__DIR__.'/../config/json-schema.php', 'json-schema');
 
-        $this->app->singleton(JsonSchemaRepository::class, function($app) {
+        $this->app->singleton(JsonSchemaRepository::class, function ($app) {
             return new JsonSchemaRepository($app->make(FilesystemFactory::class), $app['config']['json-schema'] ?? []);
         });
+
+        $this->app->bind(JsonSchemaValidator::class, JsonSchemaRepository::class);
     }
 
-    public function bootForConsole()
+    public function bootForConsole(): void
     {
         $this->publishes([
             __DIR__.'/../config/json-schema.php' => config_path('json-schema.php'),
         ], 'json-schema.config');
+
+        $this->publishes([
+            __DIR__.'/../resources/lang' => lang_path('vendor/json-schema'),
+        ], 'json-schema.translations');
     }
 }
