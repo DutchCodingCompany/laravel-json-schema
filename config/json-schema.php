@@ -13,6 +13,8 @@ return [
 
     'directory' => env('JSON_SCHEMA_DIRECTORY', 'schema'),
 
+    'auto-cache' => (bool) env('JSON_SCHEMA_AUTO_CACHE', true),
+
     /*
     |--------------------------------------------------------------------------
     | Filter for file match
