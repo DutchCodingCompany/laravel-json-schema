@@ -140,7 +140,7 @@ class JsonSchemaRepository implements Contracts\JsonSchemaValidator
         return $this->schemaCache[$schema] ??= $this->importSchema($schema);
     }
 
-    public function validate(string $schemaName, string $data): Contracts\JsonSchemaValidationResult
+    public function validate(string $schemaName, mixed $data): Contracts\JsonSchemaValidationResult
     {
         $schema = $this->getSchema($schemaName);
 
@@ -151,7 +151,7 @@ class JsonSchemaRepository implements Contracts\JsonSchemaValidator
         $result = false;
         $exception = null;
         try {
-            $schema->in(json_decode($data, flags: JSON_THROW_ON_ERROR));
+            $schema->in($data);
 
             $result = true;
         } catch (InvalidValue | JsonException $e) {

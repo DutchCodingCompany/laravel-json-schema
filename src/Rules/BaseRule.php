@@ -18,6 +18,7 @@ abstract class BaseRule implements ValidationRule
     public function __construct(
         protected bool $detailedMessage = true,
         JsonSchemaValidator | null $schemaValidator = null,
+        protected bool $decode = true,
     ) {
         $this->schemaValidator = $schemaValidator ?? Container::getInstance()->make(JsonSchemaValidator::class);
     }
@@ -29,8 +30,12 @@ abstract class BaseRule implements ValidationRule
     {
         $value ??= '';
 
-        if (! is_string($value)) {
+        if ($this->decode && ! is_string($value)) {
             $fail('json-schema::messages.must-be-string')->translate(['attribute' => $attribute]);
+        }
+
+        if ($this->decode) {
+            $value = json_decode($value, flags: JSON_THROW_ON_ERROR);
         }
 
         $result = $this->schemaValidator->validate($this->determineSchemaName(), $value);

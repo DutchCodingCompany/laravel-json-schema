@@ -25,8 +25,9 @@ class JsonSchemaAttributeRule extends BaseRule implements DataAwareRule
         protected ?string $enum = null,
         protected bool $detailedMessage = true,
         JsonSchemaValidator | null $schemaValidator = null,
+        protected bool $decode = true,
     ) {
-        parent::__construct($detailedMessage, $schemaValidator);
+        parent::__construct($detailedMessage, $schemaValidator, $decode);
     }
 
     /**

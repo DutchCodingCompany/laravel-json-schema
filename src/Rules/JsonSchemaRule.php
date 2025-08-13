@@ -14,8 +14,9 @@ class JsonSchemaRule extends BaseRule
         protected string $schema,
         protected bool $detailedMessage = true,
         JsonSchemaValidator | null $schemaValidator = null,
+        protected bool $decode = true,
     ) {
-        parent::__construct($detailedMessage, $schemaValidator);
+        parent::__construct($detailedMessage, $schemaValidator, $decode);
     }
 
     protected function determineSchemaName(): string
