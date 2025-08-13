@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.0.0 - 2025-08-13
+## 3.0.1 - 2025-08-13
 - Allow already decoded values to be used
 
 ## 2.2.0 - 2025-08-05

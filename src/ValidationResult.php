@@ -11,7 +11,7 @@ class ValidationResult implements Contracts\JsonSchemaValidationResult
         protected bool $result,
         protected string $schemaName,
         protected ?SchemaContract $schema = null,
-        protected ?string $data = null,
+        protected mixed $data = null,
         protected ?Throwable $exception = null,
     ) {
         //
@@ -47,7 +47,7 @@ class ValidationResult implements Contracts\JsonSchemaValidationResult
         return $this->schema;
     }
 
-    public function getData(): ?string
+    public function getData(): mixed
     {
         return $this->data;
     }

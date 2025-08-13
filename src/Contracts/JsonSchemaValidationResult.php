@@ -19,5 +19,5 @@ interface JsonSchemaValidationResult
 
     public function getSchema(): ?SchemaContract;
 
-    public function getData(): ?string;
+    public function getData(): mixed;
 }
