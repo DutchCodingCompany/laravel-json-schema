@@ -36,6 +36,9 @@ abstract class BaseRule implements ValidationRule
 
         if ($this->decode) {
             $value = json_decode($value, flags: JSON_THROW_ON_ERROR);
+        } elseif (is_array($value) && ! array_is_list($value)) {
+            // If the original json was decoded with `associative: true` the validator will not work correctly, so re-encode and decode it in such a case
+            $value = json_decode(json_encode($value, flags: JSON_THROW_ON_ERROR), flags: JSON_THROW_ON_ERROR);
         }
 
         $result = $this->schemaValidator->validate($this->determineSchemaName(), $value);

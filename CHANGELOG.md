@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.0.2 - 2025-08-14
+- Auto-resolve functionality of `associative: true` was used on decoding
+
 ## 3.0.1 - 2025-08-13
 - Allow already decoded values to be used
 
