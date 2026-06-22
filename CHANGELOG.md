@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.1.0 - 2026-06-22
+- Support for laravel 13.x
+
 ## 3.0.2 - 2025-08-14
 - Auto-resolve functionality of `associative: true` was used on decoding
 
